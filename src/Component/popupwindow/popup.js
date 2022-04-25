@@ -1,6 +1,8 @@
 import React from "react";
 import "./modlbox.css";
 import url from "../../Images/imageforup.jfif";
+import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const ImgUpload = ({ onChange, src }) => (
   <label htmlFor="photo-upload" className="custom-file-upload fas">
@@ -26,7 +28,7 @@ const Name = ({ onChange, value }) => (
   </div>
 );
 
-const Status = ({ onChange, clssname, value }) => (
+const Status = ({ onChange, clssname, value, date, onChange1 }) => (
   <div className="field" id={clssname}>
     <label htmlFor="status">description :</label>
     <input
@@ -37,6 +39,15 @@ const Status = ({ onChange, clssname, value }) => (
       value={value}
       placeholder="Small image description "
       required
+    />
+    <label htmlFor="status">Date :</label>
+
+    <input
+      id="date"
+      type="date"
+      value={date}
+      onChange={onChange1}
+      placeholder="enter date"
     />
   </div>
 );
@@ -61,7 +72,7 @@ const Profile = ({ onSubmit, src, name, status }) => (
 
 const Edit = ({ onSubmit, children }) => (
   <div className="card">
-    <form onSubmit={onSubmit}>
+    <form id="ff" onSubmit={onSubmit}>
       <h1>Upload Image/Art</h1>
       {children}
       <button type="submit" className="save">
@@ -78,6 +89,9 @@ class CardProfile extends React.Component {
     name: "",
     status: "",
     active: "edit",
+    userdetail: "",
+    date: "",
+    user: "",
   };
 
   photoUpload = (e) => {
@@ -105,45 +119,67 @@ class CardProfile extends React.Component {
       status,
     });
   };
-
+  editdate = (e) => {
+    const date = e.target.value;
+    this.setState({
+      date,
+    });
+  };
   handleSubmit = (e) => {
     e.preventDefault();
     // let activeP = this.state.active === "edit" ? "profile" : "edit";
     // this.setState({
     //   active: activeP,
     // });
-    console.log(this.state.file);
-    var obj = {
-      name: this.state.name,
-      img: {
-        data: this.state.file,
-        contentType: "image/png",
-      },
-      title: this.state.name,
-      desc: this.state.status,
-      postdate: "24 march 2022",
-    };
-    // console.log(obj);
-    fetch("http://localhost:3006/imagens", {
-      method: "POST",
-      body: JSON.stringify(obj), 
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then(async (data) => data.json())
-      .then((data) => {});
+    let data = new FormData();
+    data.append("file", this.state.file);
+    const date = new Date(Date.now());
+    if (this.state.file == "" || this.state.date == "") {
+      alert(
+        "please, enter all details of image which you want to upload.\nThank You."
+      );
+    } else if (this.state.date < date) {
+      alert("Please, Enter valid date.");
+    } else {
+      var obj = new FormData();
+      obj.append("file", this.state.file);
+      obj.append("discription", this.state.status);
+      obj.append("name", this.state.name);
+      obj.append("date", this.state.date);
+      obj.append("usermail", this.props.user.email);
+      obj.append("nameofuser", this.props.user.name);
+
+      // call to s3 server image
+      axios({
+        method: "POST",
+        url: "http://localhost:3004/upload",
+        data: obj,
+        headers: { "Content-Type": "multipart/form-data" },
+      }).then((res) => {
+        // then print response status
+        console.warn(res);
+        // if (res.data.success === 1) {
+        //   setSuccess("Image upload successfully");
+        // }
+      });
+    }
   };
 
   render() {
-    const { imagePreviewUrl, name, status, active } = this.state;
+    const { imagePreviewUrl, name, status, active, date } = this.state;
     return (
       <div>
         {active === "edit" ? (
           <Edit onSubmit={this.handleSubmit}>
             <ImgUpload onChange={this.photoUpload} src={imagePreviewUrl} />
             <Name onChange={this.editName} value={name} />
-            <Status onChange={this.editStatus} clssname="dis" value={status} />
+            <Status
+              onChange={this.editStatus}
+              clssname="dis"
+              value={status}
+              date={date}
+              onChange1={this.editdate}
+            />
           </Edit>
         ) : (
           <Profile

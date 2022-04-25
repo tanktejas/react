@@ -19,3 +19,7 @@
   left: 0;
   background: rgba(0,0,0,0.3);
 }
+.field label,
+.field input{
+  margin-top: 12px;
+}

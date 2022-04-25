@@ -4,15 +4,23 @@ import { useEffect } from "react";
 import Card from "../Card/card";
 import Poppop from "../popupwindow/poppop";
 import Bottom from "./bottom_add_button";
+import "./images.css";
+import { useAuth0 } from "@auth0/auth0-react";
 
 function Images() {
+  const { user } = useAuth0();
+
+  const [search, setsearch] = useState("");
+
   const [arr_of_img, setarr] = useState([]);
+  const [temp, settep] = useState([]);
   const [status, setstatus] = useState(false);
   const [url, seturl] = useState("");
   const [stateforadd, setadd] = useState(false);
+  const [curruser, setcurruser] = useState("");
 
   const fetchimages = () => {
-    fetch("http://localhost:3006/getimageinformation", {
+    fetch("https://api.spacexdata.com/v3/launches?limit=100", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -22,7 +30,8 @@ function Images() {
       .then((data) => {
         setarr(data);
         console.log(data);
-
+        settep(data);
+        // console.log(data.Contents[0].Key);
         setstatus(true);
       });
   };
@@ -34,32 +43,57 @@ function Images() {
   if (arr_of_img?.length == 0) {
     return (
       <>
-        <h1>Loading...</h1>
+        <h1 className="load">Loading...</h1>
       </>
     );
   }
   if (arr_of_img?.length != 0) {
-    const url = `http://localhost:3006/${arr_of_img[0].img.data}`;
+    if (user != undefined && user != curruser) {
+      setcurruser(user);
+    }
+
     return (
       <>
+        <div className="fil">
+          <h1>Filter</h1>
+          <input
+            value={search}
+            type="text"
+            onChange={(e) => {
+              setsearch(e.target.value);
+              let aaa = temp;
+              const aa = aaa.filter((item) => {
+                return item.mission_name
+                  .toUpperCase()
+                  .includes(search.toUpperCase());
+              });
+              if (search === "") {
+                aa = temp;
+              } else if (aa.length == 0) {
+                aa = temp[0];
+              }
+              setarr(aa);
+            }}
+            placeholder="search by name"
+          ></input>
+        </div>
         <div className="pages">
           {arr_of_img.map((item) => {
             return (
               <>
                 <Card
-                  title={item.title}
-                  desc={item.desc}
-                  name={item.name}
-                  img={item.img}
-                  postdate={item.postdate}
+                  name={item.mission_name.toUpperCase()}
+                  rocketinfo={item.rocket}
+                  year={item.launch_year}
+                  flight_number={item.flight_number}
+                  links={item.links}
                 />
               </>
             );
           })}
         </div>
-        <Bottom state={stateforadd} setstate={setadd} />
-        <Poppop state={stateforadd} setstate={setadd} />
-        
+        {/* <Bottom state={stateforadd} setstate={setadd} /> */}
+        {/* <Poppop state={stateforadd} setstate={setadd} user={user} /> */}
       </>
     );
   }

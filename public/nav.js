@@ -7,7 +7,7 @@ function test() {
   var activeWidthNewAnimWidth = activeItemNewAnim.innerWidth();
   var itemPosNewAnimTop = activeItemNewAnim.position();
   var itemPosNewAnimLeft = activeItemNewAnim.position();
-  $(".hori-selector").css({
+  $(".hori-selector").css({ 
     top: itemPosNewAnimTop.top + "px",
     left: itemPosNewAnimLeft.left + "px",
     height: activeWidthNewAnimHeight + "px",

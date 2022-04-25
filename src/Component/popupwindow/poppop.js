@@ -8,10 +8,11 @@ class App extends React.Component {
   }
 
   render() {
+
     return (
       <div>
         <Modal isOpen={this.props.state} onClose={() => this.closeModal()}>
-          <CardProfile />
+          <CardProfile user={this.props.user} />
         </Modal>
       </div>
     );

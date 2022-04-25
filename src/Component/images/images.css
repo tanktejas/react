@@ -1,0 +1,33 @@
+.pages{
+    padding-left:151px;
+    padding-right:151px;
+
+}
+ .fil{
+     display: flex;
+     justify-content: center;
+     flex-direction: column;
+     align-items: center;
+     margin-top: 83px !important;
+ }
+ .fil input{
+     width: 400px;
+     height: 45px;
+ }
+ iframe{
+     width: 0px !important;
+     height: 0px !important;
+ }
+ .load{
+     margin-top: 100px;
+ }
+ @media (max-width:449px) {
+    .fil input{
+        width: 239px;
+        height: 45px;
+    }
+    container img {
+        width: 134px;
+        height: 71px;
+    }
+ }

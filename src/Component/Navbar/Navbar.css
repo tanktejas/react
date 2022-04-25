@@ -3,22 +3,31 @@
   margin: 0;
   padding: 0;
 }
+.cc {
+  border-radius: 50% !important;
+}
+img{
+  border-radius: 50% !important;
 
+}
 body {
   background-color: #ffffffe0;
 }
 
 .pages {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  justify-content: center; 
+  grid-template-columns: repeat(auto-fill, 300px);
+  place-items:center;
+  grid-gap: 12px;  
   color: #316685;
   text-align: center;
   font-size: calc(1.5rem + 2vw);
-  margin-top: 10%;
-  
- 
+  margin-top: 10%; 
 }
-
+.makeStyles-root-1 {
+  margin-top: 49px;
+}
 .navbar {   
   position:sticky;
    background-color: #fcf9f9e0;
